@@ -52,12 +52,19 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            randomNumber.Value = new MyCustomData
-            {
-                number = Random.Range(0,10),
-                bol = false,
-                message = (Random.Range(0,100)).ToString(),
-            };
+            // randomNumber.Value = new MyCustomData
+            // {
+            //     number = Random.Range(0,10),
+            //     bol = false,
+            //     message = (Random.Range(0,100)).ToString(),
+            // };
+            TestServerRpc(new ServerRpcParams());
+            TestClientRpc(
+                new ClientRpcParams {Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new List<ulong>{ 1 }
+                }}
+                );
         }
         
         Vector3 moveDir = new Vector3(0, 0, 0);
@@ -69,5 +76,17 @@ public class PlayerNetwork : NetworkBehaviour
 
         transform.position += moveDir * moveSpeed * Time.deltaTime;
 
+    }
+
+    [ServerRpc]
+    private void TestServerRpc(ServerRpcParams serverRpcParams)
+    {
+        Debug.Log("TestServerRpc "+ OwnerClientId + "; " + serverRpcParams.Receive.SenderClientId);
+    }
+
+    [ClientRpc]
+    private void TestClientRpc(ClientRpcParams clientRpcParams)
+    {
+        Debug.Log("TestClientRpc: ");
     }
 }
